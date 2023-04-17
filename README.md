@@ -1,12 +1,37 @@
 # Flutter-MSIX
 Builds a Windows App Installer (.msix) for your Windows Flutter app, using https://pub.dev/packages/msix.
 
-To use this action, add your Windows Certificate file, in base64 format, to a repository secret and pass
-that to this workflow. This action then: 
-- Clones your repository and installs Flutter
-- Decodes your base64 certificate into a binary .pfx file
-- Runs flutter pub run msix:create to build and sign your Flutter app
-- Creates a new release and uploads the generated .msix file to it
+To use this action, add your Windows Certificate file, in base64 format, to a repository secret and pass that to this workflow:
+
+```yaml
+name: Build Windows app MSIX
+
+# Builds a Windows App Installer (.msix) for the Dashboard
+# 
+# To use this action, add your Windows Certificate file, in base64 format, to a
+# repository secret called WINDOWS_CERTIFICATE. This action then: 
+# - Installs Flutter and clones your repository
+# - Decodes your text certificate into a binary .pfx file
+# - Runs flutter pub run msix:create to build and sign your Flutter app
+# - Creates a new release and uploads the generated .msix file to it
+
+on:
+  push:
+    tags: "*"
+
+jobs:
+ build:
+  runs-on: windows-latest
+  env: 
+    windows_certificate: ${{ secrets.WINDOWS_CERTIFICATE }}
+  steps:
+    - name: Generate MSIX
+      uses: Levi-Lesches/Flutter-MSIX@v1.0
+      with: 
+        base64-certificate: ${{ env.windows_certificate }}
+        certificate-path: windows_certificate.pfx
+        msix-path: build/windows/runner/release/MyApp.msix        
+```
 
 Make sure your action runs on `windows-latest` in order to compile to Windows.
 
