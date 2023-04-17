@@ -54,15 +54,15 @@ runs:
         cache-key: ${{ inputs.flutter-cache-key }}
 
     - name: Load certificate
-      shell: powershell
+      shell: pwsh
       env: 
         base64_certificate: ${{ inputs.base64-certificate }}
       run: |
-        echo $base64_certificate > base64-certificate.txt
+        $base64_certificate > base64-certificate.txt
         openssl enc -base64 -d -in base64-certificate.txt -out ${{ inputs.certificate-path }}
 
     - name: Build MSIX file
-      shell: powershell
+      shell: pwsh
       run: |
         flutter pub get
         flutter pub run msix:create
